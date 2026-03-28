@@ -1,5 +1,6 @@
 const Listing = require("../models/listing");
 
+// INDEX
 module.exports.index = async (req, res) => {
   const allListings = await Listing.find({});
   res.render("listings/index.ejs", { allListings });
@@ -31,12 +32,16 @@ module.exports.showListing = async (req, res) => {
 
 // CREATE LISTING
 module.exports.createListing = async (req, res) => {
-  let url = req.file.path;
-  let filename = req.file.filename;
-
   const newListing = new Listing(req.body.listing);
   newListing.owner = req.user._id;
-  newListing.image = {url,filename};
+
+  if (req.file) {
+    newListing.image = {
+      url: req.file.path,
+      filename: req.file.filename,
+    };
+  }
+
   await newListing.save();
 
   req.flash("success", "New Listing Created Successfully!");
@@ -54,8 +59,13 @@ module.exports.renderEditForm = async (req, res) => {
     return res.redirect("/listings");
   }
 
-  let OriginalImageUrl = listing.image.url;
-  OriginalImageUrl = OriginalImageUrl.replace("/upload", "/upload/h_300,w_250");
+  let OriginalImageUrl = "";
+  if (listing.image && listing.image.url) {
+    OriginalImageUrl = listing.image.url.replace(
+      "/upload",
+      "/upload/h_300,w_250"
+    );
+  }
 
   res.render("listings/edit", { listing, OriginalImageUrl });
 };
@@ -67,7 +77,7 @@ module.exports.updateListing = async (req, res) => {
   const listing = await Listing.findByIdAndUpdate(
     id,
     req.body.listing,
-    { new: true }
+    { new: true, runValidators: true }
   );
 
   if (!listing) {
@@ -76,16 +86,16 @@ module.exports.updateListing = async (req, res) => {
   }
 
   if (req.file) {
-    let url = req.file.path;
-    let filename = req.file.filename;
-    listing.image = { url, filename };
+    listing.image = {
+      url: req.file.path,
+      filename: req.file.filename,
+    };
     await listing.save();
   }
 
   req.flash("success", "Listing Updated Successfully!");
   res.redirect(`/listings/${id}`);
 };
-
 
 // DELETE LISTING
 module.exports.deleteListing = async (req, res) => {

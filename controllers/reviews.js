@@ -10,13 +10,11 @@ module.exports.createReview = async (req, res) => {
     return res.redirect("/listings");
   }
 
-  // Ensure rating exists
   if (!req.body.review.rating) {
     req.flash("error", "Please select a rating");
     return res.redirect(`/listings/${id}`);
   }
 
-  // Convert rating to number safely
   req.body.review.rating = parseInt(req.body.review.rating);
 
   const newReview = new Review(req.body.review);
@@ -35,7 +33,7 @@ module.exports.deleteReview = async (req, res) => {
   const { id, reviewId } = req.params;
 
   await Listing.findByIdAndUpdate(id, {
-    $pull: { reviews: reviewId }
+    $pull: { reviews: reviewId },
   });
 
   await Review.findByIdAndDelete(reviewId);
@@ -43,4 +41,3 @@ module.exports.deleteReview = async (req, res) => {
   req.flash("success", "Review deleted successfully");
   res.redirect(`/listings/${id}`);
 };
-

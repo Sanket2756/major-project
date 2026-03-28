@@ -18,7 +18,7 @@ module.exports.signup = async (req, res, next) => {
     req.login(registeredUser, (err) => {
       if (err) return next(err);
 
-      req.flash("success", "Welcome to WanderLust!");
+      req.flash("success", "Welcome to StayNest!");
       res.redirect("/listings");
     });
   } catch (err) {
@@ -28,7 +28,7 @@ module.exports.signup = async (req, res, next) => {
 };
 
 module.exports.loginLogic = (req, res) => {
-  req.flash("success", "Welcome back to WanderLust!");
+  req.flash("success", "Welcome back to StayNest!");
   const redirectUrl = res.locals.redirectUrl || "/listings";
   delete req.session.redirectUrl;
   res.redirect(redirectUrl);
