@@ -31,7 +31,7 @@ main()
   .catch((err) => console.log(err));
 
 async function main() {
-  await mongoose.connect("mongodb://127.0.0.1:27017/wanderlust");
+  await mongoose.connect(process.env.ATLASDB_URL);
 }
 
 // -------------------- APP CONFIG --------------------
@@ -90,6 +90,8 @@ app.use((err, req, res, next) => {
 });
 
 // -------------------- SERVER --------------------
+const PORT = process.env.PORT || 8080;
+
 app.listen(8080, () => {
   console.log("Server Running on Port 8080");
 });
