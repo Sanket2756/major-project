@@ -19,13 +19,6 @@ const listingsRouter = require("./routes/listing.js");
 const reviewsRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 
-// -------------------- DATABASE --------------------
-async function main() {
-  await mongoose.connect(process.env.ATLASDB_URL);
-  console.log("Database Connected Successfully");
-}
-main().catch((err) => console.log(err));
-
 // -------------------- APP CONFIG --------------------
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -86,6 +79,17 @@ app.use((err, req, res, next) => {
 // -------------------- SERVER --------------------
 const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, () => {
-  console.log(`Server Running on Port ${PORT}`);
-});
+async function startServer() {
+  try {
+    await mongoose.connect(process.env.ATLASDB_URL);
+    console.log("Database Connected Successfully");
+
+    app.listen(PORT, () => {
+      console.log(`Server Running on Port ${PORT}`);
+    });
+  } catch (err) {
+    console.log("DB Connection Error:", err);
+  }
+}
+
+startServer();
