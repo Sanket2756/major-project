@@ -3,6 +3,7 @@ const Listing = require("../models/listing");
 // INDEX
 module.exports.index = async (req, res) => {
   const allListings = await Listing.find({});
+  console.log("TOTAL LISTINGS =", allListings.length);
   res.render("listings/index.ejs", { allListings });
 };
 
