@@ -19,7 +19,6 @@ const listingsRouter = require("./routes/listing.js");
 const reviewsRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 
-// -------------------- APP CONFIG --------------------
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.engine("ejs", ejsMate);
@@ -32,7 +31,6 @@ if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", 1);
 }
 
-// -------------------- SESSION + FLASH --------------------
 const sessionOptions = {
   secret: process.env.SECRET || "mysupersecretkey",
   resave: false,
@@ -53,7 +51,6 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// -------------------- LOCALS --------------------
 app.use((req, res, next) => {
   res.locals.currUser = req.user;
   res.locals.success = req.flash("success");
@@ -61,12 +58,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// -------------------- ROUTES --------------------
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
 app.use("/", userRouter);
 
-// -------------------- ERROR HANDLING --------------------
 app.use((req, res, next) => {
   next(new ExpressError("Page Not Found", 404));
 });
@@ -76,7 +71,6 @@ app.use((err, req, res, next) => {
   res.status(status).render("error", { message });
 });
 
-// -------------------- SERVER --------------------
 const PORT = process.env.PORT || 8080;
 
 async function startServer() {
